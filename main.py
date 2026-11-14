@@ -1,5 +1,6 @@
 from src.extract import extract_csv_tables, extract_exchange_rates
 from src.load import load_all
+from src.quality import run_quality_checks
 from src.transform import transform_all
 from src.utils import RAW_DIR
 
@@ -10,3 +11,4 @@ if __name__ == "__main__":
 
     clean = transform_all(tables, rates)
     load_all(clean)
+    run_quality_checks()

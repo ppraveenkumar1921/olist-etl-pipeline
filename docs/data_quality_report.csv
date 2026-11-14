@@ -1,0 +1,55 @@
+category,table,check,severity,bad_rows,status
+schema,dim_customers,columns match expected schema,error,0,PASS
+schema,dim_sellers,columns match expected schema,error,0,PASS
+schema,dim_products,columns match expected schema,error,0,PASS
+schema,dim_date,columns match expected schema,error,0,PASS
+schema,fact_orders,columns match expected schema,error,0,PASS
+schema,fact_order_items,columns match expected schema,error,0,PASS
+completeness,dim_customers,table is not empty (rows=99441),error,0,PASS
+completeness,dim_sellers,table is not empty (rows=3095),error,0,PASS
+completeness,dim_products,table is not empty (rows=32951),error,0,PASS
+completeness,dim_date,table is not empty (rows=774),error,0,PASS
+completeness,fact_orders,table is not empty (rows=99441),error,0,PASS
+completeness,fact_order_items,table is not empty (rows=112650),error,0,PASS
+nulls,dim_customers,customer_id has no nulls,error,0,PASS
+nulls,dim_customers,customer_unique_id has no nulls,error,0,PASS
+nulls,dim_sellers,seller_id has no nulls,error,0,PASS
+nulls,dim_products,product_id has no nulls,error,0,PASS
+nulls,dim_date,date_key has no nulls,error,0,PASS
+nulls,dim_date,full_date has no nulls,error,0,PASS
+nulls,fact_orders,order_id has no nulls,error,0,PASS
+nulls,fact_orders,customer_id has no nulls,error,0,PASS
+nulls,fact_orders,order_status has no nulls,error,0,PASS
+nulls,fact_orders,order_purchase_timestamp has no nulls,error,0,PASS
+nulls,fact_orders,date_key has no nulls,error,0,PASS
+nulls,fact_order_items,order_id has no nulls,error,0,PASS
+nulls,fact_order_items,order_item_id has no nulls,error,0,PASS
+nulls,fact_order_items,product_id has no nulls,error,0,PASS
+nulls,fact_order_items,seller_id has no nulls,error,0,PASS
+nulls,fact_order_items,customer_id has no nulls,error,0,PASS
+nulls,fact_order_items,date_key has no nulls,error,0,PASS
+nulls,fact_order_items,price has no nulls,error,0,PASS
+duplicates,dim_customers,(customer_id) is unique,error,0,PASS
+duplicates,dim_sellers,(seller_id) is unique,error,0,PASS
+duplicates,dim_products,(product_id) is unique,error,0,PASS
+duplicates,dim_date,(date_key) is unique,error,0,PASS
+duplicates,fact_orders,(order_id) is unique,error,0,PASS
+duplicates,fact_order_items,"(order_id, order_item_id) is unique",error,0,PASS
+integrity,fact_orders,customer_id exists in dim_customers.customer_id,error,0,PASS
+integrity,fact_orders,date_key exists in dim_date.date_key,error,0,PASS
+integrity,fact_order_items,order_id exists in fact_orders.order_id,error,0,PASS
+integrity,fact_order_items,product_id exists in dim_products.product_id,error,0,PASS
+integrity,fact_order_items,seller_id exists in dim_sellers.seller_id,error,0,PASS
+integrity,fact_order_items,customer_id exists in dim_customers.customer_id,error,0,PASS
+integrity,fact_order_items,date_key exists in dim_date.date_key,error,0,PASS
+business,fact_orders,order_status is one of the 8 valid values,error,0,PASS
+business,fact_order_items,price is greater than 0,error,0,PASS
+business,fact_order_items,freight_value is not negative,error,0,PASS
+business,fact_orders,review_score is between 1 and 5,error,0,PASS
+business,fact_order_items,price_usd was converted for every item,error,0,PASS
+business,fact_order_items,price_inr was converted for every item,error,0,PASS
+business,fact_orders,delivery_days is not negative,warn,0,PASS
+business,fact_orders,delivered orders have a customer delivery date,warn,8,WARN
+business,fact_orders,every order has at least one item,warn,775,WARN
+business,fact_orders,every order has a payment record,warn,1,WARN
+business,fact_orders,payment total matches item total (within 1.00 BRL),warn,249,WARN
