@@ -100,7 +100,7 @@ def build_dim_date(orders: pd.DataFrame) -> pd.DataFrame:
     df["month"] = df["full_date"].dt.month
     df["month_name"] = df["full_date"].dt.month_name()
     df["day_of_week"] = df["full_date"].dt.day_name()
-    df["is_weekend"] = df["full_date"].dt.dayofweek.isin([5, 6]).astype(int)
+    df["is_weekend"] = df["full_date"].dt.day_of_week.isin([5, 6]).astype(int)
     return df
 
 
