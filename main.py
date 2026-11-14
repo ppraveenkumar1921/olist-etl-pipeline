@@ -1,3 +1,4 @@
+from src.analysis import run_analysis
 from src.extract import extract_csv_tables, extract_exchange_rates
 from src.load import load_all
 from src.quality import run_quality_checks
@@ -12,3 +13,4 @@ if __name__ == "__main__":
     clean = transform_all(tables, rates)
     load_all(clean)
     run_quality_checks()
+    run_analysis()
