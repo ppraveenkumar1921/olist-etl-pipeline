@@ -40,19 +40,19 @@ flowchart LR
 
 erDiagram
 
-&#x20;   dim\_customers ||--o{ fact\_orders : places
+&#x20;   dim_customers ||--o{ fact\_orders : places
 
-&#x20;   dim\_date ||--o{ fact\_orders : "purchased on"
+&#x20;   dim_date ||--o{ fact\_orders : "purchased on"
 
-&#x20;   fact\_orders ||--o{ fact\_order\_items : contains
+&#x20;   fact_orders ||--o{ fact\_order\_items : contains
 
-&#x20;   dim\_products ||--o{ fact\_order\_items : "sold as"
+&#x20;   dim_products ||--o{ fact\_order\_items : "sold as"
 
-&#x20;   dim\_sellers ||--o{ fact\_order\_items : "sold by"
+&#x20;   dim_sellers ||--o{ fact\_order\_items : "sold by"
 
-&#x20;   dim\_customers ||--o{ fact\_order\_items : "bought by"
+&#x20;   dim_customers ||--o{ fact\_order\_items : "bought by"
 
-&#x20;   dim\_date ||--o{ fact\_order\_items : "purchased on"
+&#x20;   dim_date ||--o{ fact\_order\_items : "purchased on"
 
 ```
 
