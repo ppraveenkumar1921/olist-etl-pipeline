@@ -1,3 +1,4 @@
+import time
 from datetime import date, timedelta
 
 import pandas as pd
@@ -19,6 +20,8 @@ CSV_FILES = {
     "category_translation": "product_category_name_translation.csv",
 }
 
+RATES_CACHE = RAW_DIR / "exchange_rates.csv"
+
 
 def extract_csv_tables() -> dict:
     """Read all raw Olist CSV files into DataFrames."""
@@ -33,6 +36,20 @@ def extract_csv_tables() -> dict:
     return tables
 
 
+def _get_with_retry(url, params, retries=3, backoff=2):
+    """GET with retries and exponential backoff (waits 2s, then 4s)."""
+    for attempt in range(1, retries + 1):
+        try:
+            resp = requests.get(url, params=params, timeout=30)
+            resp.raise_for_status()
+            return resp
+        except requests.RequestException as exc:
+            logger.warning("API attempt %d/%d failed: %s", attempt, retries, exc)
+            if attempt == retries:
+                raise
+            time.sleep(backoff ** attempt)
+
+
 def extract_exchange_rates(start="2016-09-01", end="2018-10-31",
                            base="BRL", symbols="USD,INR") -> pd.DataFrame:
     """Fetch daily exchange rates from the Frankfurter API in chunks."""
@@ -42,8 +59,7 @@ def extract_exchange_rates(start="2016-09-01", end="2018-10-31",
     while current <= end_date:
         chunk_end = min(current + timedelta(days=80), end_date)
         url = f"https://api.frankfurter.dev/v1/{current}..{chunk_end}"
-        resp = requests.get(url, params={"base": base, "symbols": symbols}, timeout=30)
-        resp.raise_for_status()
+        resp = _get_with_retry(url, {"base": base, "symbols": symbols})
         for day, rates in resp.json()["rates"].items():
             row = {"rate_date": day}
             for cur_code, value in rates.items():
@@ -54,3 +70,16 @@ def extract_exchange_rates(start="2016-09-01", end="2018-10-31",
     df = pd.DataFrame(rows).drop_duplicates("rate_date").sort_values("rate_date")
     logger.info("Extracted exchange_rates rows=%d from API", len(df))
     return df
+
+
+def get_exchange_rates() -> pd.DataFrame:
+    """Fetch rates from the API and cache them. If the API is down, use the cache."""
+    try:
+        df = extract_exchange_rates()
+        df.to_csv(RATES_CACHE, index=False)
+        return df
+    except requests.RequestException:
+        if RATES_CACHE.exists():
+            logger.warning("API unavailable, using cached rates from %s", RATES_CACHE)
+            return pd.read_csv(RATES_CACHE)
+        raise

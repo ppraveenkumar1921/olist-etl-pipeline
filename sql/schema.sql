@@ -96,3 +96,4 @@ CREATE INDEX idx_orders_status    ON fact_orders (order_status);
 CREATE INDEX idx_items_product    ON fact_order_items (product_id);
 CREATE INDEX idx_items_seller     ON fact_order_items (seller_id);
 CREATE INDEX idx_items_date       ON fact_order_items (date_key);
+CREATE INDEX idx_items_status     ON fact_order_items (order_status);
